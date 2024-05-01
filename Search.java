@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -13,7 +12,8 @@ import java.util.EnumSet;
 public class Search {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Search::createAndShowGUI);
+        SwingUtilities.invokeLater(Search::createAndShowGUI);//method reference syntax
+        //SwingUtilities.invokeLater() is a method used to perform GUI-related tasks asynchronously. It schedules the specified task to be executed on the EDT.
     }
 
     private static void createAndShowGUI() {
@@ -22,56 +22,52 @@ public class Search {
         addComponentsToContentPane(contentPane, frame);
         frame.setContentPane(contentPane);
         frame.setVisible(true);
+        frame.setResizable(false);
     }
 
     private static JFrame createFrame() {
         JFrame frame = new JFrame("File Search Application");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null); // Center the frame on the screen
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                adjustInputSizes(frame);
-            }
-        });
+        frame.setSize(800, 400);
+        frame.setLocationRelativeTo(null); //center
         return frame;
     }
 
     private static JPanel createContentPane() {
         JPanel contentPane = new JPanel(new BorderLayout());
-        contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add some padding
-        contentPane.setBackground(Color.BLACK); // Set background color
+        contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPane.setBackground(Color.BLACK); 
         return contentPane;
     }
 
     private static void addComponentsToContentPane(JPanel contentPane, JFrame frame) {
         // Title Panel
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel titleLabel = new JLabel("File Search Application");
+        JLabel titleLabel = new JLabel("NIO Search Engine");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 40));
-        titleLabel.setForeground(new Color(255, 255, 255)); // Set text color
+        titleLabel.setForeground(Color.WHITE); 
         titlePanel.add(titleLabel);
-        titlePanel.setBackground(new Color(65, 105, 225)); // Set background color
-
-        JPanel spacePanel = new JPanel();
-        spacePanel.setPreferredSize(new Dimension(50, 60));
-
+        titlePanel.setBackground(Color.BLACK); 
         // Input Panel
         JPanel inputPanel = new JPanel();
-        inputPanel.setPreferredSize(new Dimension(400, 50)); // Set the preferred size of the panel
+        inputPanel.setPreferredSize(new Dimension(400, 50)); 
 
         JTextField directoryField = new JTextField();
-        directoryField.setPreferredSize(new Dimension(150, 15)); // Set the preferred size of the directory field
+        directoryField.setPreferredSize(new Dimension(150, 25)); 
 
         JTextField fileField = new JTextField();
-        fileField.setPreferredSize(new Dimension(150, 15)); // Set the preferred size of the file field
+        fileField.setPreferredSize(new Dimension(150, 25)); 
 
         JButton searchButton = new JButton("Search");
-        searchButton.setPreferredSize(new Dimension(80, 15)); // Set the preferred size of the search button
+        searchButton.setPreferredSize(new Dimension(80, 15)); 
+        searchButton.setBackground(Color.GRAY);
+        searchButton.setForeground(Color.white);
+
 
         JButton browseButton = new JButton("Browse");
-        browseButton.setPreferredSize(new Dimension(80, 15)); // Set the preferred size of the browse button
+        browseButton.setPreferredSize(new Dimension(80, 15)); 
+        browseButton.setBackground(Color.GRAY);
+        browseButton.setForeground(Color.white);
 
         inputPanel.add(new JLabel("Directory:"));
         inputPanel.add(directoryField);
@@ -81,15 +77,13 @@ public class Search {
         inputPanel.add(searchButton);
         inputPanel.setBackground(Color.LIGHT_GRAY);
 
-        // Result Panel
-        JPanel resultPanel = new JPanel(new BorderLayout());
+        JPanel resultPanel = new JPanel();
         JTextArea resultTextArea = new JTextArea(15, 50);
         resultTextArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(resultTextArea);
-        resultPanel.add(scrollPane, BorderLayout.CENTER);
-        resultPanel.setBackground(new Color(240, 240, 240)); // Set background color
+        resultPanel.add(scrollPane);
+        resultPanel.setBackground(Color.PINK); 
 
-        // Add components to content pane
         contentPane.add(titlePanel, BorderLayout.NORTH);
         contentPane.add(inputPanel, BorderLayout.CENTER);
         contentPane.add(resultPanel, BorderLayout.SOUTH);
@@ -100,13 +94,12 @@ public class Search {
 
         // Add mouse listener to resultTextArea
         resultTextArea.addMouseListener(new MouseAdapter() {
-            @SuppressWarnings("deprecation")
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getClickCount() == 2) {
                     JTextArea textArea = (JTextArea) e.getSource();
-                    int offset = textArea.viewToModel(e.getPoint());
+                    int offset = textArea.viewToModel2D(e.getPoint());
                     try {
                         int start = Utilities.getRowStart(textArea, offset);
                         int end = Utilities.getRowEnd(textArea, offset);
@@ -179,23 +172,5 @@ public class Search {
         }
     }
 
-    private static void adjustInputSizes(JFrame frame) {
-        for (Component component : frame.getContentPane().getComponents()) {
-            if (component instanceof JPanel) {
-                JPanel panel = (JPanel) component;
-                for (Component innerComponent : panel.getComponents()) {
-                    if (innerComponent instanceof JTextField || innerComponent instanceof JButton) {
-                        Dimension newDimension = calculateNewSize(frame, innerComponent);
-                        innerComponent.setPreferredSize(newDimension);
-                    }
-                }
-            }
-        }
-    }
-
-    private static Dimension calculateNewSize(JFrame frame, Component component) {
-        int newWidth = (int) (frame.getWidth() * 0.3); // Adjust the percentage as needed
-        int newHeight = (int) (frame.getHeight() * 0.1); // Adjust the percentage as needed
-        return new Dimension(newWidth, newHeight);
-    }
+   
 }
